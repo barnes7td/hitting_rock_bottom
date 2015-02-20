@@ -1,37 +1,53 @@
 class Cave
+  attr_accessor :map
 
-  attr_reader :elements, :map
-
-  def initialize(map)
-    @elements = {"#" => :dirt, "~" => :water, " " => :air}
-    @map = map
-  end
-
-  def each
-    #adds each method to Cave class
-    @map.each { |element| yield element }
+  def initialize(filepath)
+    @scanner = CaveScanner.new(File.new(filepath))
+    @map = @scanner.scan.rows
   end
 
   def print
-    #print map to console (for debugging)
-    puts @map
+    puts map
   end
 
   def element(arr)
-    #determine which element is located at given coordinates
-    @elements[@map[arr[0]][arr[1]]]
+    @map[arr[0]][arr[1]]
   end
 
   def add_water(arr)
-    #add water at given coordinates
-    @map[arr[0]][arr[1]] = "~"
+    @map[arr[0]][arr[1]] = Element.water
   end
-
-  def column(no)
-    #returns a string of column elements (top down) at column number
-    arr = []
-    @map.each { |row| arr << row[no] }
-    arr
+  
+  def column(col)
+    @map.map { |row| row[col] }
   end
-
+  
+  def amount_of_water_in_column(col)
+    if column_is_flowing?(col)
+      Element.water
+    else
+      amount_of_water(col)
+    end
+  end
+  
+  def column_is_flowing?(col)
+    #This method checks if air is underneath water in the column
+    return false unless column_has_water?(col)
+    column = column(col)
+    column[first_water(col)..-1].include? Element.air
+  end
+  
+  def column_has_water?(col)
+    amount_of_water(col) > 0
+  end
+  
+  private
+  
+  def first_water(col)
+    column(col).index(Element.water)
+  end
+  
+  def amount_of_water(col)
+    column(col).count(Element.water)
+  end
 end

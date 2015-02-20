@@ -1,11 +1,13 @@
 require "./lib/cave"
+require "./lib/scan"
+require "./lib/element"
 require "./lib/cave_scanner"
 require "./lib/cave_filler"
 require "./lib/water_scanner"
 
 #MAIN (run program)
 
-cs = CaveScanner.new "./data/complex_cave.txt"
+cs = CaveScanner.new File.new("./data/complex_cave.txt")
 cs.scan_cave
 
 cf = CaveFiller.new cs.scan
@@ -19,5 +21,3 @@ File.new(output_filename, "w") unless File.directory? output_filename
 File.open(output_filename, "w") do |f|
   f.puts ws.count_to_s
 end
-
-

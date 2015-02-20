@@ -2,25 +2,24 @@ class CaveScanner
 
   attr_reader :scan
 
-  def initialize(filename)
-    @filename = filename
-    @scan = {}
+  def initialize(file)
+    @file = file
+    @scan = Scan.new
+    scan_cave
   end
 
   def scan_cave
     #Collect the raw data from file
-    raw_data = File.open(@filename, "r").readlines
+    scanned_rows = @file.readlines
 
     #Seperate raw data into usuable parts
-    @scan[:water_units] = raw_data[0].to_i
-    @scan[:cave] = Cave.new(raw_data[2..-1])
+    @scan.water = scanned_rows.first.to_i
+    @scan.rows = scanned_rows[2..-1].to_a
 
     #Determine the start location of the water
     #(not really needed for files given, since water in both starts in same place)
-    i = 0
-    @scan[:cave].each do |cross_section|
-      @scan[:start_location] = [i, /[~]/ =~ cross_section] if cross_section.include? "~"
-      i += 1
+    @scan.rows.each_with_index do |cross_section, i|
+      @scan.start_location = [i, /[~]/ =~ cross_section] if cross_section.include? "~"
     end
   end
 

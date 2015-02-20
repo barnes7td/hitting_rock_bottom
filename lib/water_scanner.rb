@@ -13,9 +13,9 @@ class WaterScanner
     no_columns.times do
       column = @cave.column(i)
       if air_below_water? column
-        @column_count << "~"
+        @column_count << Element.water
       else
-        @column_count << column.count("~")
+        @column_count << column.count(Element.water)
       end
       i += 1
     end
@@ -26,8 +26,8 @@ class WaterScanner
     water_found = false
     air_below = false
     column.each do |element|
-      water_found = true if element == @cave.elements[:water]
-      air_below = true if water_found && element == @cave.elements[:air]
+      water_found = true if element == Element.water
+      air_below = true if water_found && element == Element.air
     end
     air_below
   end

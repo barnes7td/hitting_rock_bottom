@@ -1,21 +1,20 @@
-require "./cave_filler"
+require_relative "../lib/cave_filler"
 
 describe "CaveFiller" do
   before do
-    map = %Q[3
-
+    @cave = %Q[
       ######
       ~    #
       #    #
       ######]
-    fake_file = StringIO.new(map)
-    @cave_filler = CaveFiller.new(100)
+    # puts map
+    # fake_file = StringIO.new(map)
+    @cave_filler = CaveFiller.new(@cave)
   end
 
-  describe "should have all methods including" do
-    it "fill_cave"   do @cave_filler.should respond_to :fill_cave  end
-    it "fill_down"   do @cave_filler.should respond_to :fill_down  end
-    it "fill_right"  do @cave_filler.should respond_to :fill_right end
-    it "fill_up"     do @cave_filler.should respond_to :fill_cave  end
+  describe ".initialize" do
+    it "sets the cave" do
+      expect(@cave_filler.cave = @cave)
+    end
   end
 end

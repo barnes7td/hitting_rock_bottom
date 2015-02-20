@@ -3,9 +3,9 @@ class CaveFiller
   attr_reader :cave
 
   def initialize(scan)
-    @water_units = scan[:water_units]
-    @current_location = scan[:start_location]
-    @cave = scan[:cave]
+    @water_units = scan.water
+    @current_location = scan.start_location
+    @cave = scan.cave
   end
 
   def fill_cave
@@ -18,7 +18,7 @@ class CaveFiller
   def fill_down
     #Finds location below the current location and fills it with water if empty
     below = [@current_location[0] + 1, @current_location[1]]
-    if @cave.element(below) == :air
+    if @cave.element(below) == Element.air
       @current_location = below
       @cave.add_water(below)
     end
@@ -27,7 +27,7 @@ class CaveFiller
   def fill_right
     #Finds location right of the current location and fills it with water if empty
     next_to = [@current_location[0], @current_location[1] + 1]
-    if @cave.element(next_to) == :air
+    if @cave.element(next_to) == Element.air
       @current_location = next_to
       @cave.add_water(next_to)
     end
