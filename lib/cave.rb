@@ -1,53 +1,79 @@
 class Cave
-  attr_accessor :map
+  attr_accessor :rows, :column, :location, :total_amount_of_water, :locator
 
-  def initialize(filepath)
-    @scanner = CaveScanner.new(File.new(filepath))
-    @map = @scanner.scan.rows
+  def initialize(file = StringIO.new)
+    scanner = CaveScanner.new(file)
+    scan = scanner.scan
+    @rows = scan.rows
+    @location = Location.new(self, scan.start_location)
+    # @locator = Location.new(self)
+    @total_amount_of_water = scan.water
   end
 
-  def print
-    puts map
+  def to_s
+    puts rows
   end
 
   def element(arr)
-    @map[arr[0]][arr[1]]
+    rows[arr[0]][arr[1]]
   end
 
-  def add_water(arr)
-    @map[arr[0]][arr[1]] = Element.water
+  def add_water
+    @rows[location.first][location.last] = Element.water
+    true
   end
   
-  def column(col)
-    @map.map { |row| row[col] }
+  def set_column(number)
+    @column = Column.new(number, @rows)
   end
   
-  def amount_of_water_in_column(col)
-    if column_is_flowing?(col)
-      Element.water
-    else
-      amount_of_water(col)
+  def air_is_below_location?
+    element(location.below) == Element.air
+  end
+  
+  def air_is_right_of_location?
+    element(location.right_of) == Element.air
+  end
+  
+  def fill_below
+    @location.current = location.below
+    add_water
+  end
+  
+  def fill_right
+    @location.current = location.right_of
+    add_water
+  end
+  
+  def fill_up
+    @location.current = closest_location_above
+    add_water
+  end
+  
+  def closest_location_above
+    [location.row_above, rows[location.row_above].index(Element.air) ]
+  end
+  
+  def fill
+    cave_filler = CaveFiller.new(self)
+    cave_filler.fill_cave
+    rows
+  end
+  
+  def count_water_by_column
+    count = []
+    no_of_columns.times do |num|
+      set_column(num)
+      count << column.amount_of_water_in
     end
+    count.join(" ")
   end
   
-  def column_is_flowing?(col)
-    #This method checks if air is underneath water in the column
-    return false unless column_has_water?(col)
-    column = column(col)
-    column[first_water(col)..-1].include? Element.air
+  def no_of_columns
+    rows.first.size
   end
   
-  def column_has_water?(col)
-    amount_of_water(col) > 0
-  end
-  
-  private
-  
-  def first_water(col)
-    column(col).index(Element.water)
-  end
-  
-  def amount_of_water(col)
-    column(col).count(Element.water)
+  def create_output_file
+    
   end
 end
